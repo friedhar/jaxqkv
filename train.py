@@ -11,7 +11,10 @@ BATCHS_SIZE = 64
 SEQ_LEN = 8
 EMB_SIZE = 32
 
-def embedding(x, w_emb_i):
+def add_norm(x: Array) -> Array:
+    return (x - x.mean()) / x.std()
+
+def embedding(x: Array, w_emb_i: Array) -> Array:
     return  jnp.matmul(x, w_emb_i)
     
 def scaled_dot_attention(q: Array, k: Array, v: Array) -> Array:
