@@ -12,12 +12,17 @@ SEQ_LEN = 8
 EMB_SIZE = 32
 
 def dot_attention(q: Array, k: Array, v: Array) -> Array:
-    lhs = nn.softmax(q.dot(k.T) / jnp.sqrt(k.shape[-1]))
+    lhs = nn.softmax(jnp.matmul(q, jnp.swapaxes(k, -2, -1)) / jnp.sqrt(k.shape[-1]), axis=1)
     return lhs.dot(v)
 
 
 q =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
+k =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
+v =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
+print(q.shape)
+
+print(dot_attention(q,k,v).shape)
 # k =  jax.random.normal(123, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
 
-x = jnp.arange(5.0)
-print(q)
+# x = jnp.arange(5.0)
+# print(q)
