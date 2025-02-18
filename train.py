@@ -11,6 +11,19 @@ BATCHS_SIZE = 64
 SEQ_LEN = 8
 EMB_SIZE = 32
 
+class AttentionBlock:
+    def __init__(self, vocab_size: int):
+        self.w_emb = jnp.zeros((vocab_size, EMB_SIZE))
+        self.vocab_size = vocab_size
+
+        pass
+
+    def __call__(self, x: Array) -> Array:
+        embeds = jnp.matmul(self.w_emb, .T[0])
+        print(embeds)
+        
+
+
 def add_norm(x: Array) -> Array:
     return (x - x.mean()) / x.std()
 
@@ -21,6 +34,11 @@ def scaled_dot_attention(q: Array, k: Array, v: Array) -> Array:
     lhs = nn.softmax(jnp.matmul(q, jnp.swapaxes(k, -2, -1)) / jnp.sqrt(k.shape[-1]), axis=1)
     return lhs.dot(v)
 
+
+token = 1
+
+attention_block = AttentionBlock()
+attention_block(jnp.array([1]))
 
 q =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
 k =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
