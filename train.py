@@ -11,7 +11,10 @@ BATCHS_SIZE = 64
 SEQ_LEN = 8
 EMB_SIZE = 32
 
-def dot_attention(q: Array, k: Array, v: Array) -> Array:
+def embedding(x, w_emb_i):
+    return  jnp.matmul(x, w_emb_i)
+    
+def scaled_dot_attention(q: Array, k: Array, v: Array) -> Array:
     lhs = nn.softmax(jnp.matmul(q, jnp.swapaxes(k, -2, -1)) / jnp.sqrt(k.shape[-1]), axis=1)
     return lhs.dot(v)
 
@@ -19,9 +22,10 @@ def dot_attention(q: Array, k: Array, v: Array) -> Array:
 q =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
 k =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
 v =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
+
 print(q.shape)
 
-print(dot_attention(q,k,v).shape)
+print(scaled_dot_attention(q,k,v).shape)
 # k =  jax.random.normal(123, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
 
 # x = jnp.arange(5.0)
