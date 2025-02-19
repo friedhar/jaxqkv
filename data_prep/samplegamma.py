@@ -1,21 +1,10 @@
 import tiktoken
 import json
+from data_prep import process_naive
 
-def main():
-    enc = tiktoken.get_encoding("o200k_base")
-
-    print(f"vocab size: {enc.n_vocab}")
-    with open("./data_raw_tiny_samples/samplegamma.txt", "r") as f:
-        x = f.read()
-
-    encoded = enc.encode(x)
-    print(encoded)
-
-    metadata = {
-        "vocab_size": enc.n_vocab
-    }
-
-    with open("./data_parsed/samplegamma.metdata.json", "w") as f: f.write(json.dumps(metadata))
+def main(seq_len: int = 32):
+    with open("./data_raw_tiny_samples/samplegamma.txt", "r") as f:x=f.read()
+    process_naive(dataset_name="samplegamma", txt=x, seq_len=seq_len)
 
     print("Finished.")
 
