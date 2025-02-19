@@ -11,12 +11,12 @@ def process_naive(dataset_name: str, txt: str, seq_len: int = 1024, samples_limi
     inputs = []
     targets = []
 
-    for i in range(seq_len, len(tokens)):
+    for i in range(seq_len, len(tokens)-seq_len):
         if samples_limit and len(inputs) >= samples_limit: break
 
         xs = tokens[i-seq_len:i]
         print(len(xs))
-        y_i = [tokens[i]]
+        y_i =tokens[i:i+seq_len] 
         print()
         inputs.append(xs)
         targets.append(y_i)
