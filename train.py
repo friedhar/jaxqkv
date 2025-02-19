@@ -71,8 +71,9 @@ def read_data_parsed(dataset: str):
 
 def main():
     inputs, targets, vocab_size = read_data_parsed("samplegamma")
-    inputs = inputs[:32]
-    targets = targets[:32]
+    n = 64
+    inputs = inputs[:n]
+    targets = targets[:n]
     print(targets.dtype)
     config = {
         'vocab_size': vocab_size,
@@ -80,12 +81,15 @@ def main():
         'embed_dim': 32,
         'num_heads': 2,
         'num_layers': 2,
-        'hidden_dim': 256,
+        'hidden_dim': 32,
         'learning_rate': 1e-2,
     }
 
 
-    train(config=config, inputs=inputs, targets=targets)
+    train_out = train(config=config, inputs=inputs, targets=targets, num_epochs=32)
+
+    plt.plot(train_out.loss_v)
+    plt.show()
 
 
 
