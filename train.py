@@ -38,7 +38,7 @@ class Transformer:
         self.theta_qkv = jax.random.normal(key, (self.config.embedding_size, 3 * self.config.embedding_size))  ## 3 * emb_size since both q, k, v are of shape emb_size
 
         self.theta_fc1 = jax.random.normal(key, (self.config.seq_len*self.config.embedding_size,  4*self.config.seq_len*self.config.embedding_size   ))
-        self.theta_fc2 = jax.random.normal(key, (4*self.config.seq_len*self.config.embedding_size,  self.config.seq_len*self.config.embedding_size   ))
+        self.theta_fc2 = jax.random.normal(key, (4*self.config.seq_len*self.config.embedding_size, self.config.vocab_size  ))
 
         self.block = AttentionBlock(config)
 
@@ -57,7 +57,12 @@ class Transformer:
         x = self.block(q, k, v)
         assert len(x.shape) == 3
         x = x.reshape(x.shape[0], x.shape[1]*x.shape[2])
-        print(x.shape)
+        x = jnp.matmul(x, self.theta_fc1)
+        x = jnp.matmul(x, self.theta_fc2)
+        x = x / (1.0 - x)
+        x = jax.nn.softmax(x)
+
+        print(x)
     
         
 
@@ -68,6 +73,26 @@ def main():
     print("init")
     transformer = Transformer(Config(vocab_size=16, embedding_size=32, seq_len=4))
     (transformer(jnp.array([[1, 2, 3, 4]])))
+
+    X = jnp.array([
+        [i, i+1, i+2, i+3]
+        for i in range(1024)
+    ])
+
+    y = jnp.array([
+        [i+4]
+        for i in range(1024)
+    ])
+
+    steps = 1_000
+    for step in range(steps):
+        y_hat = transformer(X)
+        print(y_hat.shape)
+        loss = ((y_hat - y) ** 2).mean()
+        print("loss: ", loss)
+        grad = jax.grad(loss)
+
+
 
 if __name__ == "__main__":
     main()
