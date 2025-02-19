@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 import optax
 from flax import linen as nn
-from flax.training import train_state
+from flax.training import train_state, checkpoints
 from model import *
 from dataclasses import dataclass
 from typing import List
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from jax import Array
 import numpy as np
 import json
+import os
 
 @dataclass
 class TrainOutput:
@@ -33,16 +34,13 @@ def train_step(state, inputs, targets):
     return state.apply_gradients(grads=grads)
 
 def train(config, inputs: Array, targets: Array, num_epochs: int = 100, batch_size: int = 64):
+    cwd = os.getcwd()
     rng = jax.random.PRNGKey(42)
     state = create_train_state(rng, config)
     loss_v = []
 
         
     for epoch in range(num_epochs):
-        rng, data_rng = jax.random.split(rng)
-        # inputs, targets = get_batch(data_rng, batch_size, config['seq_len'], config['vocab_size'])
-        print("shape_i: ", inputs.shape)
-        print("shape_t: ", targets.shape)
         state = train_step(state, inputs, targets)
         
         logits = state.apply_fn({'params': state.params}, inputs)
@@ -50,7 +48,15 @@ def train(config, inputs: Array, targets: Array, num_epochs: int = 100, batch_si
             logits[:, :-1], targets[:, 1:]).mean()
 
         loss_v.append(loss)
-        print(f"Epoch {epoch+1}, Loss: {loss:.3f}")
+        print(f"Epoch {epoch+1}, Cross-Entropy Loss: {loss:.3f}")
+
+
+        try:
+            checkpoints.save_checkpoint(ckpt_dir=f"{cwd}/ckpts", target=state, step=epoch)
+        except Exception as e:
+            print(f"Error saving checkpoint: {e}")
+            pass
+    
 
     return TrainOutput(loss_v=loss_v)
 
@@ -71,7 +77,7 @@ def read_data_parsed(dataset: str):
 
 def main():
     inputs, targets, vocab_size = read_data_parsed("samplegamma")
-    n = 64
+    n = 32
     inputs = inputs[:n]
     targets = targets[:n]
     print(targets.dtype)
@@ -90,6 +96,7 @@ def main():
 
     plt.plot(train_out.loss_v)
     plt.show()
+
 
 
 

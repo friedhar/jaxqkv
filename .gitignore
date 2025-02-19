@@ -12,3 +12,4 @@ wheels/
 # Data stuff
 data_raw
 data_parsed
+ckpts
