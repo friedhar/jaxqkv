@@ -12,14 +12,21 @@ SEQ_LEN = 8
 EMB_SIZE = 32
 VOCAB_SIZE = 1024
 
-class AttentionBlock:
+class Transformer:
     def __init__(self):
         self.theta_emb = jax.random.normal(key, (VOCAB_SIZE, EMB_SIZE))
+        self.qkv_fused = jax.random.normal(key, (EMB_SIZE, 3*EMB_SIZE)) 
         pass
 
     def __call__(self, x: Array) -> Array:
-        x = nn.one_hot(x)
-        embs = self.theta_emb(x)
+        x = nn.one_hot(x, VOCAB_SIZE)
+        embs = jnp.matmul(x, self.theta_emb)
+
+        qkv_fused = jnp.matmul(embs, self.qkv_fused)
+        print(qkv_fused.shape)
+
+        q, k, v = qkv_fused.reshape
+
         print(embs)
         
 
@@ -37,7 +44,7 @@ def scaled_dot_attention(q: Array, k: Array, v: Array) -> Array:
 
 token = 1
 
-attention_block = AttentionBlock()
+attention_block = Transformer()
 attention_block(jnp.array([1]))
 
 q =  jax.random.normal(key, (BATCHS_SIZE,SEQ_LEN,EMB_SIZE))
