@@ -2,7 +2,7 @@
 
 jaxqkv is a transformer framework in `jax`, with small amounts of `flax` (otimized layers) & `optax` (advance grad optimizers). The general goal is for it to be used both as a reference implementation, learning resource & general playground.
 
-A sample loader & tokenizer of the [TinyStories]() is provided, and training on different datasets should be pretty low overhead.
+A sample loader & tokenizer of the [TinyStories dataset](https://huggingface.co/datasets/roneneldan/TinyStories/tree/main) is provided, and training on different datasets should be pretty low overhead.
 
 ## Setup
 ```
