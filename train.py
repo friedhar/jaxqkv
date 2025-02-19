@@ -7,12 +7,14 @@ from model import *
 from dataclasses import dataclass
 from typing import List
 import matplotlib.pyplot as plt
+from jax import Array
+import numpy as np
 
 @dataclass
 class TrainOutput:
     loss_v: List[float]
 
-def get_batch(rng, batch_size, seq_len, vocab_size):
+def get_batch(X, y):
     data = jax.random.randint(rng, (batch_size, seq_len + 1), 0, vocab_size)
     return data[:, :-1], data[:, 1:]
 
@@ -33,14 +35,15 @@ def train_step(state, inputs, targets):
     grads = jax.grad(loss_fn)(state.params)
     return state.apply_gradients(grads=grads)
 
-def train(config, num_epochs: int = 100, batch_size: int = 64):
+def train(config, inputs: Array, targets: Array, num_epochs: int = 100, batch_size: int = 64):
     rng = jax.random.PRNGKey(42)
     state = create_train_state(rng, config)
     loss_v = []
+
         
     for epoch in range(num_epochs):
         rng, data_rng = jax.random.split(rng)
-        inputs, targets = get_batch(data_rng, batch_size, config['seq_len'], config['vocab_size'])
+        # inputs, targets = get_batch(data_rng, batch_size, config['seq_len'], config['vocab_size'])
         print("shape_i: ", inputs.shape)
         print("shape_t: ", targets.shape)
         state = train_step(state, inputs, targets)
@@ -61,26 +64,30 @@ def print_train_header(config, hr_width: int = 32) -> None:
     print("Config: ", config)
     print("-"*hr_width)
 
+def read_data_parsed(dataset: str):
+    inputs = jnp.array(np.load(f"./data_parsed/{dataset}_inputs.npy"))
+    targets = jnp.array(np.load(f"./data_parsed/{dataset}_targets.npy"))
+
+    return inputs, targets
+    
+
 def main():
-    lr_v = [ 2**5,2**6,2**7,2**8]
-    print(lr_v)
-    for lr_i in lr_v:
-        config = {
-            'vocab_size': 1024,
-            'seq_len': 32,
-            'embed_dim': 32,
-            'num_heads': 2,
-            'num_layers': 2,
-            'hidden_dim': lr_i,
-            'learning_rate': 1e-2,
-        }
-        print_train_header(config)
+    inputs, targets = read_data_parsed("samplegamma")
+    print(inputs)
+    config = {
+        'vocab_size': 1024,
+        'seq_len': 32,
+        'embed_dim': 32,
+        'num_heads': 2,
+        'num_layers': 2,
+        'hidden_dim': 256,
+        'learning_rate': 1e-2,
+    }
 
 
-        plt.plot(train(config, num_epochs=64).loss_v, label=f"{lr_i}")
+    train(config=config, inputs=inputs, targets=targets)
 
-    plt.legend()
-    plt.show()
+
 
 if __name__ == "__main__":
     main()
