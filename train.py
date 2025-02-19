@@ -10,17 +10,17 @@ key = jax.random.key(42)
 BATCHS_SIZE = 64
 SEQ_LEN = 8
 EMB_SIZE = 32
+VOCAB_SIZE = 1024
 
 class AttentionBlock:
-    def __init__(self, vocab_size: int):
-        self.w_emb = jnp.zeros((vocab_size, EMB_SIZE))
-        self.vocab_size = vocab_size
-
+    def __init__(self):
+        self.theta_emb = jax.random.normal(key, (VOCAB_SIZE, EMB_SIZE))
         pass
 
     def __call__(self, x: Array) -> Array:
-        embeds = jnp.matmul(self.w_emb, .T[0])
-        print(embeds)
+        x = nn.one_hot(x)
+        embs = self.theta_emb(x)
+        print(embs)
         
 
 
