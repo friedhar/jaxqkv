@@ -52,6 +52,12 @@ def train(config, num_epochs: int = 100, batch_size: int = 64):
 
     return TrainOutput(loss_v=loss_v)
 
+def print_train_header(config, hr_width: int = 32) -> None:
+    print("-"*hr_width)
+    print("Jaxqkv :: TRAINING")
+    print("Avaialble Local Devices: ", jax.local_devices())
+    print("Config: ", config)
+    print("-"*hr_width)
 
 def main():
     config = {
@@ -63,14 +69,10 @@ def main():
         'hidden_dim': 512,
         'learning_rate': 0.001,
     }
-    border_width = 64
-    print("-"*border_width)
-    print("Jaxqkv :: TRAINING")
-    print("Avaialble Local Devices: ", jax.local_devices())
-    print("Config: ", config)
-    print("-"*border_width)
+    print_train_header(config)
 
-    plt.plot(train(config).loss_v)
+
+    plt.plot(train(config, num_epochs=1000).loss_v)
     plt.show()
 
 if __name__ == "__main__":
