@@ -9,6 +9,7 @@ from typing import List
 import matplotlib.pyplot as plt
 from jax import Array
 import numpy as np
+import json
 
 @dataclass
 class TrainOutput:
@@ -65,17 +66,24 @@ def print_train_header(config, hr_width: int = 32) -> None:
     print("-"*hr_width)
 
 def read_data_parsed(dataset: str):
+    with open(f"./data_parsed/{dataset}_metadata.json","r") as f:metadata=json.loads(f.read())
     inputs = jnp.array(np.load(f"./data_parsed/{dataset}_inputs.npy"))
-    targets = jnp.array(np.load(f"./data_parsed/{dataset}_targets.npy"))
 
-    return inputs, targets
+    targets = jnp.array(np.load(f"./data_parsed/{dataset}_targets.npy"))
+    # targets = jax.nn.one_hot(targets, num_classes=metadata["vocab_size"])
+
+    # targets = targets.astype("int")
+
+    return inputs, targets, metadata["vocab_size"]
     
 
 def main():
-    inputs, targets = read_data_parsed("samplegamma")
-    print(inputs)
+    inputs, targets, vocab_size = read_data_parsed("samplegamma")
+    inputs = inputs[:32]
+    targets = targets[:32]
+    print(targets.dtype)
     config = {
-        'vocab_size': 1024,
+        'vocab_size': vocab_size,
         'seq_len': 32,
         'embed_dim': 32,
         'num_heads': 2,

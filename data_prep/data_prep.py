@@ -3,7 +3,7 @@ import jax.numpy as jnp
 import numpy as np
 import json
 
-def process_naive(dataset_name: str, txt: str, seq_len: int = 1024):
+def process_naive(dataset_name: str, txt: str, seq_len: int = 1024, samples_limit: int = None):
     enc = tiktoken.get_encoding("o200k_base")
     tokens = enc.encode(txt)
     print(f"len(tokens): {len(tokens)}")
@@ -12,9 +12,11 @@ def process_naive(dataset_name: str, txt: str, seq_len: int = 1024):
     targets = []
 
     for i in range(seq_len, len(tokens)):
+        if samples_limit and len(inputs) >= samples_limit: break
+
         xs = tokens[i-seq_len:i]
         print(len(xs))
-        y_i = tokens[i]
+        y_i = [tokens[i]]
         print()
         inputs.append(xs)
         targets.append(y_i)
