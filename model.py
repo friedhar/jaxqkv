@@ -21,6 +21,7 @@ class DecoderLayer(nn.Module):
         ff = nn.relu(ff)
         ff = nn.Dense(self.embed_dim)(ff)
         x = nn.LayerNorm()(x + ff)
+
         return x
 
 class Transformer(nn.Module):

@@ -4,6 +4,13 @@ import optax
 from flax import linen as nn
 from flax.training import train_state
 from model import *
+from dataclasses import dataclass
+from typing import List
+import matplotlib.pyplot as plt
+
+@dataclass
+class TrainOutput:
+    loss_v: List[float]
 
 def get_batch(rng, batch_size, seq_len, vocab_size):
     data = jax.random.randint(rng, (batch_size, seq_len + 1), 0, vocab_size)
@@ -33,6 +40,7 @@ def train(config):
     
     rng = jax.random.PRNGKey(42)
     state = create_train_state(rng, config)
+    loss_v = []
         
     for epoch in range(num_epochs):
         rng, data_rng = jax.random.split(rng)
@@ -42,7 +50,11 @@ def train(config):
         logits = state.apply_fn({'params': state.params}, inputs)
         loss = optax.softmax_cross_entropy_with_integer_labels(
             logits[:, :-1], targets[:, 1:]).mean()
+
+        loss_v.append(loss)
         print(f"Epoch {epoch+1}, Loss: {loss:.3f}")
+
+    return TrainOutput(loss_v=loss_v)
 
 
 def main():
@@ -55,7 +67,8 @@ def main():
         'hidden_dim': 512,
         'learning_rate': 0.001,
     }
-    train(config)
+    plt.plot(train(config).loss_v)
+    plt.show()
 
 if __name__ == "__main__":
     main()
