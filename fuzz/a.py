@@ -6,7 +6,7 @@ def main():
 
     print(enc.n_vocab)
     print(enc.encode("hello th'e"))
-    with open("./fuzz/deeplearning_wiki.txt", "r") as f:
+    with open("./data_raw_tiny_sample/deeplearning_wiki.txt", "r") as f:
         x = f.read()
 
     encoded = enc.encode(x)

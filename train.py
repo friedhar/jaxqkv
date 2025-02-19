@@ -41,6 +41,8 @@ def train(config, num_epochs: int = 100, batch_size: int = 64):
     for epoch in range(num_epochs):
         rng, data_rng = jax.random.split(rng)
         inputs, targets = get_batch(data_rng, batch_size, config['seq_len'], config['vocab_size'])
+        print("shape_i: ", inputs.shape)
+        print("shape_t: ", targets.shape)
         state = train_step(state, inputs, targets)
         
         logits = state.apply_fn({'params': state.params}, inputs)

@@ -9,6 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-# Other
+# Data stuff
 data_raw
 data_parsed
