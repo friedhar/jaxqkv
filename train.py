@@ -33,11 +33,7 @@ def train_step(state, inputs, targets):
     grads = jax.grad(loss_fn)(state.params)
     return state.apply_gradients(grads=grads)
 
-def train(config):
-
-    batch_size = 64
-    num_epochs = 10
-    
+def train(config, num_epochs: int = 100, batch_size: int = 64):
     rng = jax.random.PRNGKey(42)
     state = create_train_state(rng, config)
     loss_v = []
@@ -59,7 +55,7 @@ def train(config):
 
 def main():
     config = {
-        'vocab_size': 100,
+        'vocab_size': 1024,
         'seq_len': 32,
         'embed_dim': 128,
         'num_heads': 4,
@@ -67,6 +63,13 @@ def main():
         'hidden_dim': 512,
         'learning_rate': 0.001,
     }
+    border_width = 64
+    print("-"*border_width)
+    print("Jaxqkv :: TRAINING")
+    print("Avaialble Local Devices: ", jax.local_devices())
+    print("Config: ", config)
+    print("-"*border_width)
+
     plt.plot(train(config).loss_v)
     plt.show()
 
