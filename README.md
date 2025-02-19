@@ -1,1 +1,7 @@
-# jaxqkv - WIP Transformer Implementation In Jax
+# jaxqkv - Transformer Implementation & Baseline Expiriments In Jax
+
+## TODO - Possible Roadmap
+* Flash Attention Support
+* RoPe Token Embedding
+* Non-Naive KV Cache
+* Support for GRPO
