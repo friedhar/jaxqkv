@@ -8,6 +8,8 @@ A sample loader & tokenizer of the [TinyStories dataset](https://huggingface.co/
 ```
 git clone https://github.com/friedhar/jaxqkv.git 
 cd jaxqkv
+chmod +x setup_env.sh
+./setup_env.sh
 ```
 
 
