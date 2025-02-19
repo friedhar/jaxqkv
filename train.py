@@ -15,10 +15,6 @@ import json
 class TrainOutput:
     loss_v: List[float]
 
-def get_batch(X, y):
-    data = jax.random.randint(rng, (batch_size, seq_len + 1), 0, vocab_size)
-    return data[:, :-1], data[:, 1:]
-
 def create_train_state(rng, config):
     model = Transformer(**config)
     params = model.init(rng, jnp.ones((1, config['seq_len']), dtype=jnp.int32))['params']
@@ -68,11 +64,7 @@ def print_train_header(config, hr_width: int = 32) -> None:
 def read_data_parsed(dataset: str):
     with open(f"./data_parsed/{dataset}_metadata.json","r") as f:metadata=json.loads(f.read())
     inputs = jnp.array(np.load(f"./data_parsed/{dataset}_inputs.npy"))
-
     targets = jnp.array(np.load(f"./data_parsed/{dataset}_targets.npy"))
-    # targets = jax.nn.one_hot(targets, num_classes=metadata["vocab_size"])
-
-    # targets = targets.astype("int")
 
     return inputs, targets, metadata["vocab_size"]
     
