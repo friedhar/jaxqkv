@@ -60,19 +60,24 @@ def print_train_header(config, hr_width: int = 32) -> None:
     print("-"*hr_width)
 
 def main():
-    config = {
-        'vocab_size': 1024,
-        'seq_len': 32,
-        'embed_dim': 128,
-        'num_heads': 4,
-        'num_layers': 2,
-        'hidden_dim': 512,
-        'learning_rate': 0.001,
-    }
-    print_train_header(config)
+    lr_v = [ 2**5,2**6,2**7,2**8]
+    print(lr_v)
+    for lr_i in lr_v:
+        config = {
+            'vocab_size': 1024,
+            'seq_len': 32,
+            'embed_dim': 32,
+            'num_heads': 2,
+            'num_layers': 2,
+            'hidden_dim': lr_i,
+            'learning_rate': 1e-2,
+        }
+        print_train_header(config)
 
 
-    plt.plot(train(config, num_epochs=1000).loss_v)
+        plt.plot(train(config, num_epochs=64).loss_v, label=f"{lr_i}")
+
+    plt.legend()
     plt.show()
 
 if __name__ == "__main__":
