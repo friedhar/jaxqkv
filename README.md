@@ -12,6 +12,13 @@ chmod +x setup_env.sh
 ./setup_env.sh
 ```
 
+## I just want to see a loss curve
+```
+uv run data_prep/samplegamma.py
+uv run train.py samplegamma
+```
+
+## I want to train on my own dataset
 
 ## TODO - Possible Roadmap
 * Flash Attention Support
