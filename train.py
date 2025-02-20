@@ -52,7 +52,7 @@ def train(config, inputs: Array, targets: Array, num_epochs: int = 100, batch_si
 
 
         try:
-            checkpoints.save_checkpoint(ckpt_dir=f"{cwd}/ckpts", target=state, step=epoch)
+            checkpoints.save_checkpoint(ckpt_dir=f"{cwd}/ckpts", target=state, step=epoch, overwrite=True)
         except Exception as e:
             print(f"Error saving checkpoint: {e}")
             pass
